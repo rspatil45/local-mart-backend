@@ -1,0 +1,6 @@
+1. for interactive console to create spring project
+https://start.spring.io/
+
+2. maven repository website to get all dependency xml format
+
+3. best to refer spring documents 
