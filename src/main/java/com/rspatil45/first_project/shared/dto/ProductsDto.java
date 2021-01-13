@@ -12,8 +12,9 @@ public class ProductsDto implements Serializable {
 	public long id;
 	public String userId;
 	public String name;
-	
+	public String token;
 	public String image;
+
 	public String description;
 	public double price;
 	public Date date;
@@ -51,6 +52,12 @@ public class ProductsDto implements Serializable {
 	}
 	public void setImage(String image) {
 		this.image = image;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
 	}
 	public String getDescription() {
 		return description;

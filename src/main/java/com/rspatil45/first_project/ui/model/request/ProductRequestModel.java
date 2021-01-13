@@ -7,6 +7,7 @@ public class ProductRequestModel {
 	private double price;
 	private int quantity;
 	private String userId;
+	private String token;
 	private String category;
 	public String getCategory() {
 		return category;
@@ -49,6 +50,12 @@ public class ProductRequestModel {
 	}
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
 	}
 	
 	

@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +25,7 @@ import com.rspatil45.first_project.shared.dto.ProductsDto;
 import com.rspatil45.first_project.ui.model.request.ProductRequestModel;
 import com.rspatil45.first_project.ui.model.request.ProductResponseModel;
 import com.rspatil45.first_project.ui.model.response.ProductCreateResponseModel;
+import com.rspatil45.first_project.util.JwtUtils;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -34,25 +37,12 @@ public class productsController {
 
 	@Autowired
 	private ProductRepository prd;
-
-//	@GetMapping
-//	public List<ProductEntity> getAllProducts()
-//	{
-//		
-//		//return prd.findAll();
-//		
-//		    List<ProductEntity> result = new ArrayList<ProductEntity>();
-//		    
-//		    Iterable<ProductEntity> iterable = (Iterable<ProductEntity>) prd.findAll();
-//
-//		    Iterator<ProductEntity> itr = iterable.iterator();
-//		    itr.forEachRemaining(result::add);
-//		    return result;
-//		
-//	}
+	
+	JwtUtils jwt = new JwtUtils();
 
 	@PostMapping("/new")
 	public ProductCreateResponseModel addProduct(@RequestBody ProductRequestModel product) {
+		jwt.validateToken(product.getToken());
 		Date d = new Date();
 		ProductCreateResponseModel returnValue = new ProductCreateResponseModel();
 		ProductsDto productDto = new ProductsDto();
@@ -61,26 +51,12 @@ public class productsController {
 		ProductsDto createdProuct = productService.addProduct(productDto);
 		BeanUtils.copyProperties(createdProuct, returnValue);
 		return returnValue;
-
 	}
 
-//	@GetMapping()
-//	public List<ProductEntity> getProducts(@RequestParam(value="page",defaultValue="1")int page, 
-//			@RequestParam(value="limit",defaultValue="8"),int limit)
-//	{
-//		
-//		List<ProductEntity> result = new ArrayList<ProductEntity>();
-//	
-//		 Iterable<ProductEntity> iterable = productService.getProducts(page, limit);
-//		 Iterator<ProductEntity> itr = iterable.iterator();
-//		 itr.forEachRemaining(result::add);
-//		return result;
-//		
-//	}
-	@GetMapping
+	@GetMapping(produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public List<ProductsDto> getProducts(@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "limit", defaultValue = "2") int limit) {
-
+		
 		List<ProductsDto> products = productService.getProducts(page, limit);
 		return products;
 	}
@@ -100,7 +76,21 @@ public class productsController {
 		BeanUtils.copyProperties(item, product);
 		return product;
 	}
-
+	
+	@DeleteMapping(path="/{id}/{token}")
+	public boolean deleteProduct(@PathVariable long id, @PathVariable String token)
+	{
+		
+		jwt.validateToken(token);
+		try {
+			prd.deleteById(id);
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
+		
+	}
+	
 	@GetMapping(path = "/count")
 	long getCount() {
 		
@@ -111,7 +101,7 @@ public class productsController {
 
 	@PutMapping("/update")
 	public ProductResponseModel updateProduct(@RequestBody ProductsDto product) {
-
+		jwt.validateToken(product.getToken());
 		ProductResponseModel returnValue = new ProductResponseModel();
 		ProductEntity currentProduct = prd.findById(product.getId());
 		if (currentProduct == null) {

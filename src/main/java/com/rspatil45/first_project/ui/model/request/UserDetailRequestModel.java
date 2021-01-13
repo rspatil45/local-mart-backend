@@ -5,6 +5,7 @@ public class UserDetailRequestModel {
 	private String lastname;
 	private String email;
 	private String password;
+	private String token;
 	public String getFirstname() {
 		return firstname;
 	}
@@ -30,6 +31,12 @@ public class UserDetailRequestModel {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
 	}
 	 
 }

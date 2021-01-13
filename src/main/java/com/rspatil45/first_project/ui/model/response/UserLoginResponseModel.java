@@ -4,15 +4,10 @@ public class UserLoginResponseModel {
 	private String userId;
 	private String email;
 	private String firstname;
-	private String lastname;
+	private String token;
 	private String role;
 	
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -31,11 +26,18 @@ public class UserLoginResponseModel {
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
 	}
-	public String getLastname() {
-		return lastname;
+
+	public String getToken() {
+		return token;
 	}
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setToken(String token) {
+		this.token = token;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 }
