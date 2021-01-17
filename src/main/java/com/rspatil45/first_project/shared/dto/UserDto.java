@@ -1,6 +1,9 @@
 package com.rspatil45.first_project.shared.dto;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.rspatil45.first_project.entity.ProductEntity;
 
 public class UserDto implements Serializable{
 
@@ -12,16 +15,17 @@ public class UserDto implements Serializable{
 	private String role="user";
 	private String lastname;
 	private String password;
-	private String userId;
+	private String publicUid;
 	private String emailVerificationToken;
 	private String encryptedPassword;
+	private List<ProductEntity> products;
 	private boolean emailVerificationStatus=false;
 	
 	public String getUserId() {
-		return userId;
+		return publicUid;
 	}
 	public void setUserId(String userId) {
-		this.userId = userId;
+		this.publicUid = userId;
 	}
 	public String getEmailVerificationToken() {
 		return emailVerificationToken;
@@ -78,10 +82,11 @@ public class UserDto implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	
-	
-	
-	
+	public List<ProductEntity> getProducts() {
+		return products;
+	}
+	public void setProducts(List<ProductEntity> products) {
+		this.products = products;
+	}
 	
 }

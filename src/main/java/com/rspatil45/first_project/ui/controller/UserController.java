@@ -1,10 +1,8 @@
 package com.rspatil45.first_project.ui.controller;
 
 import java.io.IOException;
-
 import java.security.GeneralSecurityException;
 import java.util.Date;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,19 +14,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.rspatil45.first_project.entity.ProductEntity;
 import com.rspatil45.first_project.entity.UserEntity;
 import com.rspatil45.first_project.entity.UserRepository;
 import com.rspatil45.first_project.service.UserService;
-
+import com.rspatil45.first_project.shared.dto.ProductsDto;
 import com.rspatil45.first_project.shared.dto.UserDto;
-import com.rspatil45.first_project.ui.model.request.UserDetailRequestModel;
+import com.rspatil45.first_project.ui.model.request.ProductRRModel;
+import com.rspatil45.first_project.ui.model.request.UserSignupRequestModel;
 import com.rspatil45.first_project.ui.model.response.UserLoginResponseModel;
 import com.rspatil45.first_project.ui.model.response.UserResponseModel;
 import com.rspatil45.first_project.util.AESAlgorithm;
 import com.rspatil45.first_project.util.JwtUtils;
 import com.rspatil45.first_project.security.SecurityConstants;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -52,10 +50,9 @@ public class UserController {
 	JwtUtils jwt = new JwtUtils();
 	// @CrossOrigin(origins = "http://localhost:8080")
 	@GetMapping()
-	public String getUser(@RequestBody UserDetailRequestModel udetails) {
+	public String getUser(@RequestBody UserSignupRequestModel udetails) {
 		String token = udetails.getToken();
 		jwt.validateToken(token);
-		
 		return "get User was called";
 	}
 
@@ -63,7 +60,7 @@ public class UserController {
 			consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
 			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}
 	)
-	public UserLoginResponseModel loginUser(@RequestBody UserDetailRequestModel udetail) throws GeneralSecurityException, IOException {
+	public UserLoginResponseModel loginUser(@RequestBody UserSignupRequestModel udetail) throws GeneralSecurityException, IOException {
 		String email = udetail.getEmail();
 		UserEntity user = urd.findByEmail(email);
 		UserLoginResponseModel returnValue = new UserLoginResponseModel();
@@ -82,9 +79,18 @@ public class UserController {
 		}
 
 	}
+	
+	@PostMapping(path = "/addproduct", 
+			consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	public UserResponseModel addProduct(@RequestBody UserResponseModel uresponse) {
+		return null;
+		
+	}
 
-	@PostMapping("/signup")
-	public UserResponseModel createUser(@RequestBody UserDetailRequestModel userDetails)
+	@PostMapping(path="/signup",consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	public UserResponseModel createUser(@RequestBody UserSignupRequestModel userDetails)
 			throws GeneralSecurityException, IOException {
 
 		// check for already existed user
@@ -105,8 +111,6 @@ public class UserController {
 
 		UserDto createdUser = userService.createUser(userDto);
 		BeanUtils.copyProperties(createdUser, returnValue);
-
-		returnValue.setMessage("User Added Successful");
 		return returnValue;
 	}
 
@@ -119,6 +123,7 @@ public class UserController {
 	public String deleteUser() {
 		return "delete user was called";
 	}
+
 	
 	
 

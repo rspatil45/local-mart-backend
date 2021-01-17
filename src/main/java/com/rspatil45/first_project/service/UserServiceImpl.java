@@ -33,9 +33,9 @@ public class UserServiceImpl implements UserService {
 		BeanUtils.copyProperties(user, userEntity);
 
 		
-		String userId = util.generateUserId(15);
+		String publicUid = util.generateUserId(15);
 		
-		userEntity.setUserId(user.getEmail()+userId);
+		userEntity.setPublicUid(userEntity.getEmail()+publicUid);
 		
 		UserEntity storedUserDetails = userRepository.save(userEntity);	
 		

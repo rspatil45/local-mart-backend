@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.rspatil45.first_project.entity.ProductEntity;
 import com.rspatil45.first_project.entity.ProductRepository;
 import com.rspatil45.first_project.shared.dto.ProductsDto;
-
+import com.rspatil45.first_project.ui.model.request.ProductRRModel;
 
 
 @Service
@@ -27,29 +27,28 @@ public class ProductService{
 		
 		ProductEntity entity = new ProductEntity();
 		BeanUtils.copyProperties(product, entity);
-		
 		ProductEntity savedProduct = productRepository.save(entity);
-		
 		ProductsDto returnValue = new ProductsDto();
 		BeanUtils.copyProperties(savedProduct, returnValue);
-				
 		return returnValue;
 	}
-	public List<ProductsDto> getProducts(int page, int limit)
+	
+	public List<ProductRRModel> getProducts(int page, int limit)
 	{
 		if(page>0) page = page - 1;
-		List<ProductsDto> returnValue = new ArrayList<>();
+		List<ProductRRModel> returnValue = new ArrayList<>();
 		PageRequest pageableRequest = PageRequest.of(page, limit);
 		Page<ProductEntity> productPage = productRepository.findAll(pageableRequest);
 		List<ProductEntity> products = productPage.getContent();
 		for(ProductEntity prd: products)
 		{
-			ProductsDto productDto= new ProductsDto();
+			ProductRRModel productDto= new ProductRRModel();
 			BeanUtils.copyProperties(prd, productDto);
 			returnValue.add(productDto);
 		}
 		return returnValue;
 	}
+	
 	public List<ProductsDto> getSortedProducts(String category, int page, int limit)
 	{
 		if(page>0)  page = page-1;

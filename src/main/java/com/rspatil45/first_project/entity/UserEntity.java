@@ -1,29 +1,30 @@
 package com.rspatil45.first_project.entity;
-
 import java.io.Serializable;
-
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.NaturalId;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+//jsonidentityinfo annotation used to prevent recursion , here property field is the only field which we will show to avoid recursion
+// so it this property can't be null
 @Entity(name="users")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="publicUid")
 public class UserEntity implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue
 	private long id;
-	
-//	@Column(nullable=false)
-//	private String userId="1";
-//	
-	
-
+		
 	@Column(nullable=false, length=30)
 	private String firstname;
 	
@@ -38,14 +39,15 @@ public class UserEntity implements Serializable{
 	
 	@Column(nullable=false)
 	private String password;
-	
-
-	
+	 
 	@Column(nullable=false)
-	private String userId;
+	private String publicUid;
+	
+	@OneToMany(targetEntity=ProductEntity.class)
+	private List<ProductEntity> products;
 
-
-
+	
+	//------------------------------------------------------------------------------
 	public String getPassword() {
 		return password;
 	}
@@ -53,18 +55,6 @@ public class UserEntity implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	
-	
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	
 
 	public String getFirstname() {
 		return firstname;
@@ -97,17 +87,30 @@ public class UserEntity implements Serializable{
 	public void setRole(String role) {
 		this.role = role;
 	}
-	 	 
 
-	public String getUserId() {
-		return userId;
+	public long getId() {
+		return id;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setId(long id) {
+		this.id = id;
 	}
 
+	public String getPublicUid() {
+		return publicUid;
+	}
 
+	public void setPublicUid(String publicUid) {
+		this.publicUid = publicUid;
+	}
 
+//	public List<ProductEntity> getProducts() {
+//		return products;
+//	}
+//
+//	public void setProducts(List<ProductEntity> products) {
+//		this.products = products;
+//	}
+ 	 
 	
 }	

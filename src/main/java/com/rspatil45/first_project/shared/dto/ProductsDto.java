@@ -2,6 +2,7 @@ package com.rspatil45.first_project.shared.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import com.rspatil45.first_project.entity.UserEntity;
 
 public class ProductsDto implements Serializable {
 
@@ -10,16 +11,21 @@ public class ProductsDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public long id;
-	public String userId;
+	public UserEntity user;
 	public String name;
 	public String token;
 	public String image;
-
+	public int quantity;
 	public String description;
 	public double price;
+	public String publicUid;
 	public Date date;
 	public String category;
 	
+	
+	//-----------------------------------------------------------------------------------------------------
+	
+
 	public Date getDate() {
 		return date;
 	}
@@ -35,12 +41,7 @@ public class ProductsDto implements Serializable {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+
 	public String getName() {
 		return name;
 	}
@@ -77,11 +78,24 @@ public class ProductsDto implements Serializable {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	public int quantity;
+	public UserEntity getUser() {
+		return user;
+	}
+	public void setUser(UserEntity user) {
+		this.user = user;
+	}
+	public String getPublicUid() {
+		return publicUid;
+	}
+	public void setPublicUid(String publicUid) {
+		this.publicUid = publicUid;
+	}
 	public String getCategory() {
 		return category;
 	}
 	public void setCategory(String category) {
 		this.category = category;
 	}
+
+
 }

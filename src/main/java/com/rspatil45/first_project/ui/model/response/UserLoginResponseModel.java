@@ -1,19 +1,13 @@
 package com.rspatil45.first_project.ui.model.response;
 
 public class UserLoginResponseModel {
-	private String userId;
+	private String publicUid;
 	private String email;
 	private String firstname;
 	private String token;
 	private String role;
+	private long id;
 	
-	
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 	public String getEmail() {
 		return email;
 	}
@@ -38,6 +32,18 @@ public class UserLoginResponseModel {
 	}
 	public void setRole(String role) {
 		this.role = role;
+	}
+	public String getPublicUid() {
+		return publicUid;
+	}
+	public void setPublicUid(String publicUid) {
+		this.publicUid = publicUid;
+	}
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
 	}
 
 }

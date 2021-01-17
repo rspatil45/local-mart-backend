@@ -1,11 +1,15 @@
 package com.rspatil45.first_project.ui.model.request;
+import java.util.List;
 
-public class UserDetailRequestModel {
+import com.rspatil45.first_project.entity.ProductEntity;
+public class UserSignupRequestModel {
 	private String firstname;
 	private String lastname;
 	private String email;
 	private String password;
 	private String token;
+	private List<ProductEntity> products;
+	
 	public String getFirstname() {
 		return firstname;
 	}
@@ -18,9 +22,7 @@ public class UserDetailRequestModel {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
-	
-	
-	public String getEmail() {
+		public String getEmail() {
 		return email;
 	}
 	public void setEmail(String email) {
@@ -38,5 +40,10 @@ public class UserDetailRequestModel {
 	public void setToken(String token) {
 		this.token = token;
 	}
-	 
+	public List<ProductEntity> getProducts() {
+		return products;
+	}
+	public void setProducts(List<ProductEntity> products) {
+		this.products = products;
+	}
 }

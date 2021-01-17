@@ -1,23 +1,26 @@
 package com.rspatil45.first_project.ui.model.response;
 
+import java.util.List;
+
+import com.rspatil45.first_project.entity.ProductEntity;
+
 public class UserResponseModel {
-		private String userId;
+		private long id;
+		private String publicUid;
 		private String firstname;
 		private String lastname;
 		private String email;
 		private String role;
+		private List<ProductEntity> products;
+		
+		
 		public String getRole() {
 			return role;
 		}
 		public void setRole(String role) {
 			this.role = role;
 		}
-		public String getUserId() {
-			return userId;
-		}
-		public void setUserId(String userId) {
-			this.userId = userId;
-		}
+	
 		public String getFirstname() {
 			return firstname;
 		}
@@ -36,12 +39,23 @@ public class UserResponseModel {
 		public void setEmail(String email) {
 			this.email = email;
 		}
-		private String message;
-		public String getMessage() {
-			return message;
+		public String getPublicUid() {
+			return publicUid;
 		}
-		public void setMessage(String message) {
-			this.message = message;
+		public void setPublicUid(String publicUid) {
+			this.publicUid = publicUid;
+		}
+		public long getId() {
+			return id;
+		}
+		public void setId(long id) {
+			this.id = id;
+		}
+		public List<ProductEntity> getProducts() {
+			return products;
+		}
+		public void setProducts(List<ProductEntity> products) {
+			this.products = products;
 		}
 
 }

@@ -1,26 +1,27 @@
 package com.rspatil45.first_project.ui.model.request;
 
-public class ProductRequestModel {
+import java.io.Serializable;
+import java.util.Date;
+import com.rspatil45.first_project.entity.UserEntity;
+
+public class ProductRRModel {
+	/**
+	 * 
+	 */
+	
 	private String name;
 	private String image;
 	private String description;
 	private double price;
 	private int quantity;
-	private String userId;
-	private String token;
+	private UserEntity user;
 	private String category;
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
-	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+	private String token;
+	private String publicUid;
+	private long id;
+	private Date date;
+	
+	//-----------------------------------------------------------------
 	public String getName() {
 		return name;
 	}
@@ -51,12 +52,43 @@ public class ProductRequestModel {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+	
+	public String getPublicUid() {
+		return publicUid;
+	}
+	public void setPublicUid(String publicUid) {
+		this.publicUid = publicUid;
+	}
+	
 	public String getToken() {
 		return token;
 	}
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
+	public UserEntity getUser() {
+		return user;
+	}
+	public void setUser(UserEntity user) {
+		this.user = user;
+	}
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public Date getDate() {
+		return date;
+	}
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	public String getCategory() {
+		return category;
+	}
 	
 }
