@@ -1,14 +1,25 @@
 package com.rspatil45.first_project.ui.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.Date;
+import java.util.List;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,22 +31,15 @@ import com.rspatil45.first_project.entity.UserRepository;
 import com.rspatil45.first_project.service.UserService;
 import com.rspatil45.first_project.shared.dto.ProductsDto;
 import com.rspatil45.first_project.shared.dto.UserDto;
+import com.rspatil45.first_project.ui.model.request.Cart;
+import com.rspatil45.first_project.ui.model.request.OrderRequestModel;
 import com.rspatil45.first_project.ui.model.request.ProductRRModel;
 import com.rspatil45.first_project.ui.model.request.UserSignupRequestModel;
 import com.rspatil45.first_project.ui.model.response.UserLoginResponseModel;
 import com.rspatil45.first_project.ui.model.response.UserResponseModel;
 import com.rspatil45.first_project.util.AESAlgorithm;
 import com.rspatil45.first_project.util.JwtUtils;
-import com.rspatil45.first_project.security.SecurityConstants;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import net.bytebuddy.utility.RandomString;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -43,7 +47,10 @@ import io.jsonwebtoken.UnsupportedJwtException;
 public class UserController {
 	@Autowired
 	UserService userService;
-
+	
+	@Autowired
+    private JavaMailSender mailSender;
+	
 	@Autowired
 	private UserRepository urd;
 	
@@ -54,6 +61,16 @@ public class UserController {
 		String token = udetails.getToken();
 		jwt.validateToken(token);
 		return "get User was called";
+	}
+	
+	
+	@GetMapping("/products/{uid}")
+	List<ProductEntity> getProducts(@PathVariable String uid)
+	{
+		UserEntity user = urd.findByPublicUid(uid);
+		if(user==null) throw new RuntimeException("user not found");
+		if(user.getProducts()==null) throw new RuntimeException("user doesn't have products");
+		return user.getProducts();
 	}
 
 	@PostMapping(path = "/login", 
@@ -114,17 +131,98 @@ public class UserController {
 		return returnValue;
 	}
 
-	@PutMapping
-	public String updateUser() {
-		return "update user was called";
+	@PostMapping(path = "/place-order", 
+			consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	public String placeOrder(@RequestBody OrderRequestModel order) throws UnsupportedEncodingException, MessagingException {
+		System.out.println(order.toString());
+		for(Cart cart: order.getCart())
+		{	
+			sendOrderEmail(order.getUser(),cart.getItem(),cart.getAmount());
+		}
+		return "all orders placed successfully";
 	}
+
 
 	@DeleteMapping
 	public String deleteUser() {
 		return "delete user was called";
 	}
-
+	@PutMapping(path = "/verify-order", 
+			consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+	public void verifyOrder( @RequestBody UserEntity usr) throws UnsupportedEncodingException, MessagingException {	
+		 String randomCode = RandomString.make(4);	
+		 UserEntity user = urd.findByEmail(usr.getEmail());
+		 if(user==null) throw new RuntimeException("User not found");
+		 user.setVerifyCode(randomCode);
+		 sendVerificationEmail(user, randomCode);
+		 System.out.println(randomCode);
+	}
 	
 	
+	private void sendVerificationEmail(UserEntity user, String code)
+	        throws MessagingException, UnsupportedEncodingException {
+	    String toAddress = user.getEmail();
+	    String fromAddress = "rspatil45@gmail.com";
+	    String senderName = "Admin Local mart";
+	    String subject = "verification code";
+	    String content = "Dear [[name]],<br>"
+	            + "Your verification code for local mart is given below:<br>"
+	            + "[[vcode]]<br>";
+	     
+	    MimeMessage message = mailSender.createMimeMessage();
+	    MimeMessageHelper helper = new MimeMessageHelper(message);
+	     
+	    helper.setFrom(fromAddress, senderName);
+	    helper.setTo(toAddress);
+	    helper.setSubject(subject);
+	     
+	    content = content.replace("[[name]]", user.getFirstname());
+	     
+	    content = content.replace("[[vcode]]", code);
+	     
+	    helper.setText(content, true);
+	     
+	    mailSender.send(message);
+	     
+	}
+	private void sendOrderEmail(UserEntity buyer, ProductEntity product, int amount) throws UnsupportedEncodingException, MessagingException {
+		String owner_id = product.getPublicUid();
+		UserEntity owner = urd.findByPublicUid(owner_id);
+		 String toAddress = owner.getEmail();
+		    String fromAddress = "rspatil45@gmail.com";
+		    String senderName = "Admin Local mart";
+		    String subject = "Order Information";
+		    String content = "Dear [[name]],<br>"
+		            + "Your have received orders Details as below:<br>"
+		            + "Customer Name: [[userName]]<br>"
+		    		+"Customer email: [[userEmail]]<br>"
+		            +"Order Details:<br>"
+		    		+"Product Name: [[ordName]]<br>"
+		            +"Quantity: [[ordQuantity]]<br>"
+		    		+"Category: [[ordCategory]]";
+		    
+		    MimeMessage message = mailSender.createMimeMessage();
+		    MimeMessageHelper helper = new MimeMessageHelper(message);
+		     
+		    helper.setFrom(fromAddress, senderName);
+		    helper.setTo(toAddress);
+		    helper.setSubject(subject);
+		     
+		    content = content.replace("[[name]]", owner.getFirstname());
+		     
+		    content = content.replace("[[userName]]", buyer.getFirstname()+" "+buyer.getLastname());
+		    content = content.replace("[[userEmail]]", buyer.getEmail());
+		    content = content.replace("[[ordName]]", product.getName());
+		    content = content.replace("[[ordQuantity]]", Integer.toString(amount));
+		    content = content.replace("[[ordCategory]]", product.getCategory());
+		    
+		     
+		    helper.setText(content, true);
+		     
+		    mailSender.send(message);
+		
+	}
 
 }

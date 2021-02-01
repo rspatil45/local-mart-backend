@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Utils {
 	private final Random random = new SecureRandom();
-	private final String alphabet= "+01ab;cd45ABCdLOKGDTV@&*89567323@#%&*liebawm,.zwe013";
+	private final String alphabet= "01abcd45ABCdLOKGDTV89567323liebawmasdfjklmzwe013";
 	public String generateUserId(int length) {
 		return generatedRandomString(length);
 	}

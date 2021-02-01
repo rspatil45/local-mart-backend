@@ -44,6 +44,7 @@ public class ProductService{
 		{
 			ProductRRModel productDto= new ProductRRModel();
 			BeanUtils.copyProperties(prd, productDto);
+			productDto.setUser(null);
 			returnValue.add(productDto);
 		}
 		return returnValue;
@@ -60,6 +61,7 @@ public class ProductService{
 		{
 			ProductsDto productDto = new ProductsDto();
 			BeanUtils.copyProperties(prd, productDto);
+			productDto.setUser(null);
 			returnValue.add(productDto);
 		}
 		return returnValue;

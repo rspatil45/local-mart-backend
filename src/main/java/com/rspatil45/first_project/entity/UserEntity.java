@@ -4,6 +4,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -11,12 +12,13 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.NaturalId;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 //jsonidentityinfo annotation used to prevent recursion , here property field is the only field which we will show to avoid recursion
 // so it this property can't be null
 @Entity(name="users")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="publicUid")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class UserEntity implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -43,7 +45,11 @@ public class UserEntity implements Serializable{
 	@Column(nullable=false)
 	private String publicUid;
 	
-	@OneToMany(targetEntity=ProductEntity.class)
+	@Column()
+	private String verifyCode;
+	
+	@OneToMany(mappedBy="user",fetch = FetchType.LAZY)
+	@JsonIgnoreProperties("user")
 	private List<ProductEntity> products;
 
 	
@@ -104,13 +110,21 @@ public class UserEntity implements Serializable{
 		this.publicUid = publicUid;
 	}
 
-//	public List<ProductEntity> getProducts() {
-//		return products;
-//	}
-//
-//	public void setProducts(List<ProductEntity> products) {
-//		this.products = products;
-//	}
+	public List<ProductEntity> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<ProductEntity> products) {
+		this.products = products;
+	}
+
+	public String getVerifyCode() {
+		return verifyCode;
+	}
+
+	public void setVerifyCode(String verifyCode) {
+		this.verifyCode = verifyCode;
+	}
  	 
 	
 }	

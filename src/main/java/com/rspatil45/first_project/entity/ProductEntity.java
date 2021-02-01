@@ -3,11 +3,13 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity(name="products")
@@ -25,8 +27,11 @@ public class ProductEntity implements Serializable {
 	@Column
 	private String category;
 	
-	@ManyToOne
+	@ManyToOne( )
+	@JsonIgnoreProperties("products")
+	@JoinColumn(name="user_id")
 	private UserEntity user;
+	
 	
 	@Column(nullable=false)
 	private String publicUid;

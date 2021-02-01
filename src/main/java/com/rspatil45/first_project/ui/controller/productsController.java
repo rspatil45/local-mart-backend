@@ -1,10 +1,12 @@
 package com.rspatil45.first_project.ui.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +24,10 @@ import com.rspatil45.first_project.shared.dto.ProductsDto;
 import com.rspatil45.first_project.ui.model.request.ProductRRModel;
 import com.rspatil45.first_project.util.JwtUtils;
 
+import net.bytebuddy.utility.RandomString;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("products") // http://localhost:8080/users
 public class productsController {
 	@Autowired
@@ -32,7 +35,8 @@ public class productsController {
 
 	@Autowired
 	private ProductRepository prd;
-
+	
+	
 	JwtUtils jwt = new JwtUtils();
 
 	@PostMapping(value = "/new", consumes = { MediaType.APPLICATION_XML_VALUE,
@@ -52,7 +56,7 @@ public class productsController {
 
 	@GetMapping(produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public List<ProductRRModel> getProducts(@RequestParam(value = "page", defaultValue = "0") int page,
-			@RequestParam(value = "limit", defaultValue = "4") int limit) {
+			@RequestParam(value = "limit", defaultValue = "6") int limit) {
 
 		List<ProductRRModel> products = productService.getProducts(page, limit);
 		return products;
@@ -70,10 +74,28 @@ public class productsController {
 	public ProductRRModel getProductById(@PathVariable long id) {
 		ProductRRModel product = new ProductRRModel();
 		ProductEntity item = prd.findById(id);
+		item.setUser(null);
 		BeanUtils.copyProperties(item, product);
 		return product;
 	}
 
+	@GetMapping(path="/search",produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public List<ProductsDto> searchProduct(@RequestParam(value="keyword") String keyword)
+	{
+		List<ProductEntity> returnValue = prd.searchKeyword(keyword);
+		List<ProductsDto> return2 = new ArrayList<ProductsDto>();
+		for(ProductEntity pent: returnValue)
+		{
+			ProductsDto productDto = new ProductsDto();
+			BeanUtils.copyProperties(pent, productDto);
+			productDto.setUser(null);
+			return2.add(productDto);
+		}
+		return return2;
+		
+	}
+
+	
 	@DeleteMapping(path = "/{id}/{token}")
 	public boolean deleteProduct(@PathVariable long id, @PathVariable String token) {
 
@@ -97,8 +119,10 @@ public class productsController {
 		}
 	}
 
-	@PutMapping("/update")
-	public ProductRRModel updateProduct(@RequestBody ProductsDto product) {
+	@PutMapping(path="/update",consumes = { MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
+					MediaType.APPLICATION_JSON_VALUE })
+	public ProductRRModel updateProduct(@RequestBody ProductRRModel product) {
 		jwt.validateToken(product.getToken());
 		ProductRRModel returnValue = new ProductRRModel();
 		ProductEntity currentProduct = prd.findById(product.getId());
@@ -114,6 +138,12 @@ public class productsController {
 		prd.save(currentProduct);
 		BeanUtils.copyProperties(currentProduct, returnValue);
 		return returnValue;
+	}
+	
+	@PostMapping("/placeOrder")
+	public void completeOrder(@RequestBody ProductsDto products[], @RequestBody String verifyCode)
+	{
+	
 	}
 
 }
