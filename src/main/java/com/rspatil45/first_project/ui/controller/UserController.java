@@ -135,12 +135,22 @@ public class UserController {
 			consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
 			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public String placeOrder(@RequestBody OrderRequestModel order) throws UnsupportedEncodingException, MessagingException {
-		System.out.println(order.toString());
-		for(Cart cart: order.getCart())
-		{	
-			sendOrderEmail(order.getUser(),cart.getItem(),cart.getAmount());
+		String code = order.getCode();
+		UserEntity user = order.getUser();
+		user = urd.findByEmail(user.getEmail());
+		System.out.println(code + "" + user.getVerifyCode());
+		if(code.equals(user.getVerifyCode()))
+		{
+			for(Cart cart: order.getCart())
+			{	
+				sendOrderEmail(order.getUser(),cart.getItem(),cart.getAmount());
+			}
+			return "all orders placed successfully";
+		}else
+		{
+			throw new RuntimeException("Invalid authentication code");
 		}
-		return "all orders placed successfully";
+		
 	}
 
 
@@ -156,6 +166,7 @@ public class UserController {
 		 UserEntity user = urd.findByEmail(usr.getEmail());
 		 if(user==null) throw new RuntimeException("User not found");
 		 user.setVerifyCode(randomCode);
+		 urd.save(user);
 		 sendVerificationEmail(user, randomCode);
 		 System.out.println(randomCode);
 	}
@@ -168,7 +179,7 @@ public class UserController {
 	    String senderName = "Admin Local mart";
 	    String subject = "verification code";
 	    String content = "Dear [[name]],<br>"
-	            + "Your verification code for local mart is given below:<br>"
+	            + "Your verification code for local mart is given below:<br><br>"
 	            + "[[vcode]]<br>";
 	     
 	    MimeMessage message = mailSender.createMimeMessage();

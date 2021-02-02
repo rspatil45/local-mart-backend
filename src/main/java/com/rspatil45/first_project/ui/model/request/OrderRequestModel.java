@@ -7,6 +7,7 @@ import com.rspatil45.first_project.entity.UserEntity;
 public class OrderRequestModel {
 	private UserEntity user;
 	private List<Cart> cart;
+	private String code;
 	public UserEntity getUser() {
 		return user;
 	}
@@ -18,6 +19,12 @@ public class OrderRequestModel {
 	}
 	public void setCart(List<Cart> cart) {
 		this.cart = cart;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }
