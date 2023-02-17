@@ -2,8 +2,6 @@ package com.rspatil45.first_project.ui.model.response;
 
 import java.util.Date;
 
-import com.rspatil45.first_project.entity.UserEntity;
-
 public class ProductResponseModel {
 	private String name;
 	private String image;

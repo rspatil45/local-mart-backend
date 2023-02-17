@@ -1,6 +1,5 @@
 package com.rspatil45.first_project.ui.model.request;
 
-import java.io.Serializable;
 import java.util.Date;
 import com.rspatil45.first_project.entity.UserEntity;
 

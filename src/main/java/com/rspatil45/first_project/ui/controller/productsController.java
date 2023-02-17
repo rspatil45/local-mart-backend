@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +22,6 @@ import com.rspatil45.first_project.service.ProductService;
 import com.rspatil45.first_project.shared.dto.ProductsDto;
 import com.rspatil45.first_project.ui.model.request.ProductRRModel;
 import com.rspatil45.first_project.util.JwtUtils;
-
-import net.bytebuddy.utility.RandomString;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
